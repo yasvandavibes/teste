@@ -17,3 +17,17 @@ color: rgb(252, 163, 163);
 display: flex;
 padding-left: 200px;
 }
+.videos {
+    display: flex;
+    overflow: auto;
+    gap: 10px;
+}
+
+    .videos img{
+        opacity: 0.5;
+        height: 200px;
+        }
+        .videos img:hover{
+            opacity: 1.0;
+            border: 3px solid #75352c;
+        }
