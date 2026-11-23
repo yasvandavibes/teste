@@ -1,37 +1,221 @@
-   <!DOCTYPE html>
-<html lang="pt-br"> 
-<head>
-   <meta charset="UTF-8"> 
-  <meta name="viewport" content= "width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="style.css">
-  <title>Document</title>
-      </head>
-      <body>
-<header>
-   <h1>Suzane:Assasina e Manipuladora </h1>
-</header>
-<section>
-         <div class="capa">
-            <img id="heroi" src="suzane.jpg" alt="Suzane Von Richthofen"> 
-            <p>Suzane Von Richthofen ficou conhecida por ser a mentora de um dos crimes mais conhecidos 
-            do Brasil: a morte dos próprios pais juntamente com o namorado Daniel e o cunhado
-            Cristian Cravinhos. </p>
-         </div>
 
-      <div>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/Zm15mfDj5g4?si=tJ5idMbjWdHs7q1f" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> 
-      </div>
-    </section>
-    <section>
-        <h2>
-            mais videos 
-        </h2> 
-        <div>
-        <a href="//youtu.be/8Mj4qVm5teU?si=4Rq5jBv4eoE1kPbc"></a>
-          <a href=" https://youtu.be/NsIkqjwsipc?si=FVYHkYL9N00Rr23Q" ></a>
-            <a href="https://youtu.be/y9YeC3epgzc?si=vS4qiIrq7EnFwLy7"></a>
-           <a href="https://youtu.be/nQP8dfOPtj8?si=p-PExVwH7B3Uqv-v"></a>
-        </div>
-    </section>
-      </body>
-      </html> 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MusicWave</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#100d18;color:white;
+ font-family:Arial,sans-serif;padding:25px;
+}
+header{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:27px;font-weight:bold;color:#a78bfa}
+input,button{border:0;border-radius:12px;padding:13px}
+input{background:#241c32;color:white;width:100%}
+button{cursor:pointer;background:#8b5cf6;color:white}
+.container{max-width:1000px;margin:auto}
+.hero{
+ background:linear-gradient(120deg,#542a85,#171125);
+ padding:35px;border-radius:22px;margin:25px 0;
+}
+.hero h1{font-size:38px}
+h2{margin-top:30px}
+.grid{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+ gap:17px;
+}
+.card{background:#211a2e;padding:15px;border-radius:17px}
+.cover{
+ height:130px;border-radius:12px;
+ background:linear-gradient(135deg,#9b5de5,#24123e);
+ display:grid;place-items:center;font-size:42px;
+}
+.card button{margin-top:8px}
+#songs{display:grid;gap:10px;margin-top:15px}
+.song{
+ background:#211a2e;padding:13px;border-radius:12px;
+ display:flex;align-items:center;gap:12px;
+}
+.song button{margin-left:auto}
+.player{
+ position:sticky;bottom:10px;margin-top:30px;
+ background:#292039;padding:18px;border-radius:17px;
+}
+.controls{display:flex;align-items:center;justify-content:center;gap:18px}
+.controls button{font-size:19px}
+#progress{width:100%;margin-top:12px}
+small{color:#b8a9cc}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+ <div class="logo">♫ MusicWave</div>
+ <label for="upload">
+  <button onclick="document.getElementById('upload').click()">
+   + Adicionar músicas
+  </button>
+ </label>
+ <input id="upload" type="file" accept="audio/*" multiple hidden>
+</header>
+
+<div class="hero">
+ <h1>Sinta a música.</h1>
+ <p>Seu som. Seu estilo. Seu mundo.</p>
+ <button onclick="document.getElementById('upload').click()">
+  Começar a ouvir
+ </button>
+</div>
+
+<input id="search" placeholder="🔎 Pesquisar músicas..."
+ oninput="render()">
+
+<h2>Suas playlists</h2>
+<div class="grid">
+ <div class="card">
+  <div class="cover">🎧</div>
+  <h3>Eletrônica</h3>
+  <small>Seu ritmo favorito</small>
+ </div>
+ <div class="card">
+  <div class="cover">🌙</div>
+  <h3>Chill Vibes</h3>
+  <small>Para relaxar</small>
+ </div>
+ <div class="card">
+  <div class="cover">🔥</div>
+  <h3>Hits</h3>
+  <small>Seus favoritos</small>
+ </div>
+</div>
+
+<h2>Biblioteca de músicas</h2>
+<div id="songs">
+ <p>Adicione arquivos MP3 para começar!</p>
+</div>
+
+<div class="player">
+ <div id="now">Nenhuma música selecionada</div>
+ <div class="controls">
+  <button onclick="previous()">⏮</button>
+  <button onclick="togglePlay()" id="play">▶</button>
+  <button onclick="next()">⏭</button>
+ </div>
+ <input type="range" id="progress" value="0" min="0" max="100">
+ <div style="display:flex;justify-content:space-between">
+  <small id="time">0:00</small>
+  <input id="volume" type="range" min="0" max="1"
+   step="0.01" value="0.7" style="width:100px">
+ </div>
+</div>
+
+<audio id="audio"></audio>
+</div>
+
+<script>
+const audio=document.getElementById('audio');
+const songs=[];
+let current=0;
+let favorites=[];
+
+document.getElementById('upload').onchange=e=>{
+ [...e.target.files].forEach(file=>{
+  songs.push({
+   name:file.name.replace(/\.[^/.]+$/,""),
+   url:URL.createObjectURL(file)
+  });
+ });
+ render();
+};
+
+function render(){
+ const term=document.getElementById('search').value.toLowerCase();
+ const list=document.getElementById('songs');
+ list.innerHTML='';
+
+ songs.forEach((song,i)=>{
+  if(!song.name.toLowerCase().includes(term))return;
+
+  const div=document.createElement('div');
+  div.className='song';
+
+  const name=document.createElement('span');
+  name.textContent='🎵 '+song.name;
+
+  const play=document.createElement('button');
+  play.textContent='▶';
+  play.onclick=()=>playSong(i);
+
+  const fav=document.createElement('button');
+  fav.textContent=favorites.includes(i)?'❤️':'🤍';
+  fav.onclick=()=>{
+   favorites=favorites.includes(i)
+    ?favorites.filter(x=>x!==i):[...favorites,i];
+   render();
+  };
+
+  div.append(name,play,fav);
+  list.appendChild(div);
+ });
+
+ if(!list.children.length){
+  list.textContent='Nenhuma música encontrada.';
+ }
+}
+
+function playSong(i){
+ current=i;
+ audio.src=songs[i].url;
+ audio.play();
+ document.getElementById('now').textContent=songs[i].name;
+ document.getElementById('play').textContent='⏸';
+}
+
+function togglePlay(){
+ if(!audio.src)return;
+ if(audio.paused){
+  audio.play();
+  document.getElementById('play').textContent='⏸';
+ }else{
+  audio.pause();
+  document.getElementById('play').textContent='▶';
+ }
+}
+
+function next(){
+ if(songs.length)playSong((current+1)%songs.length);
+}
+
+function previous(){
+ if(songs.length)playSong((current-1+songs.length)%songs.length);
+}
+
+audio.onended=next;
+
+audio.ontimeupdate=()=>{
+ if(audio.duration){
+  document.getElementById('progress').value=
+   audio.currentTime/audio.duration*100;
+  const m=Math.floor(audio.currentTime/60);
+  const s=Math.floor(audio.currentTime%60);
+  document.getElementById('time').textContent=
+   m+':'+String(s).padStart(2,'0');
+ }
+};
+
+document.getElementById('progress').oninput=e=>{
+ if(audio.duration)audio.currentTime=e.target.value/100*audio.duration;
+};
+
+document.getElementById('volume').oninput=e=>{
+ audio.volume=e.target.value;
+};
+
+audio.volume=0.7;
+</script>
+</body>
+</html>
